@@ -5,3 +5,33 @@ editor: visual
 ---
 
 # Assignment 4 - Wordle
+
+Creating a function to load in my files
+
+```{r}
+library(readr)
+load_dictionary <- function(filename) {
+  readr::read_table(
+    file = filename,
+    col_names = TRUE)
+}
+valid_list <- collins.scrabble.words.2019
+str(valid_list)
+
+load_dictionary <- function(google.10000.english.usa.no.swears) {
+  readr::read_table(
+    file = filename,
+    col_names = TRUE)
+}
+solution_list <- google.10000.english.usa.no.swears
+str(solution_list)
+class(solution_list)
+
+```
+
+Step 2 - reducing the variables in the **solution_list** to only those that are also included in the valid_list
+
+```{r}
+solution_list1 <- intersect(valid_list, solution_list)
+
+```
