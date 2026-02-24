@@ -8,10 +8,10 @@ editor: visual
 
 ```{r}
 library(tidyverse)
+library(sjmisc)
 load_dictionary <- function(filename) {
     word_list <- read_csv(filename, col_names = TRUE)
     word_list <- word_list[["words"]]
-    return(word_list)
 }
 
 scrabble <- "https://raw.githubusercontent.com/difiore/ada-datasets/main/google-10000-english-usa-no-swears.txt"
@@ -28,4 +28,113 @@ Step 2
 
 ```{r}
 solution_list<- intersect(solution_list, valid_list)
+```
+
+Step 3  - Pick Solutions Function
+
+```{r}
+pick_solution <- function(word_list) {
+    solution_options <- word_list[nchar(word_list) == 5]
+    solution <- sample(solution_options, 1)
+    print(solution)
+    vec_truesolution <- str_split(solution, "")[[1]]
+}
+
+coolword <- pick_solution(solution_list)
+```
+
+Step 4 part A - Play Wordle function
+
+```{r}
+#creating the play_wordle function 
+play_wordle <- function(coolword, valid_list, num_guesses = 6) {
+#arguments required including the correct word, the options available to choose from, and the tries required)
+    word_length <- length(coolword) #amount of characters in correct word
+    print(paste0("You have ", num_guesses, " chances to guess a word of length ", word_length)) #Instructions for gameplayer 
+    remaining_letters <- LETTERS #Adding in the letter vector (all caps)
+    previous_guesses <- data.frame(matrix(nrow = num_guesses, ncol = word_length))
+    #Holds previous guesses as a matrix in previous_guesses object
+    previous_results <- data.frame(matrix(nrow = num_guesses, ncol = word_length))
+    #Holds previous results as a matric in previous_results object
+    for (i in 1:num_guesses)  { #loop for number of guesses out of six
+        print(paste0(c("Letters left: ", reamining_letters))) #prints the remaining letters available
+        guess <- readline(paste0("Pick word", i, "! -> ")) %>% 
+            toupper() #prompting user to input a word based on what round we are on and fill as capitalized letters
+       
+         while (nchar(guess) != word_length) { #using while() loop to validate the input word is the correct word length
+            guess <- readline(paste("WRONG! Five characters are needed buddy...")) %>%
+                toupper()
+        }
+        while (guess %nin% valid_list) { #using the while() loop to validate the input word is on the valid_list by using 'not in' operator 
+            guess <- readline(paste0("She doesn't even go here, pick another one for round ", i)) %>%
+                toupper()
+        }
+        guess <- str_split(guess, "")[[1]] #breaking up the users guess into a character string vector
+        result <- evaluate_guess(guess, coolword) #using my evaluate_guess function to return the results of each character placement
+        remaining_letters <- setdiff(remaining_letters, guess) #using the setdiff() function to find the difference between the remaining_letters vector and the guess to update the remainin_letters vector
+        previous_guesses[i, ] <- paste0(Guess, collapse = "")
+        previous_results[i, ] <- paste0(Result, collapse = "")
+        if (all(result == "*")) { #IF all letters in guess vector match coolword vector
+            previous_guesses <- previous_guesses %>%
+                na.omit()
+            previous_results <- previous_results %>%
+                na.omit()
+            print(paste("CONGRATS! You are one smart cookie!"))
+            previous_guesses <- previous_guesses %>%
+                unite(everything(), sep = "", col = "guess", remove = TRUE)
+            previous_results <- previous_results %>%
+                unite(everything(), sep = "", col = "result", remove = TRUE)
+            game_save <- data.frame(guess = previous_guesses, result = previous_results)
+            print(game_save)
+        }
+}
+
+    print(paste0("WRONG! The correct cool word was ", paste0(coolword, collapse = "")))
+
+    previous_guesses <- previous_guesses %>%
+        unite(everything(), sep = "", col = "guess", remove = TRUE)
+    previous_results <- previous_results %>%
+        unite(everything(), sep = "", col = "result", remove = TRUE)
+    game_save <- data.frame(guess = previous_guesses, result = previous_results)
+    print(game_save)
+}
+
+
+
+evaluate_guess <- function(guess, coolword) {
+    wlength <- length(coolword)
+    resulttxt <- rep("-", word_length)
+
+    guess_count <- tibble(letter = guess) %>%
+        group_by(letter) %>%
+        summarize(n_in_guess = n())
+    solution_count <- tibble(letter = coolword) %>%
+        group_by(letter) %>%
+        summarize(n_in_solution = n())
+    counts <- inner_join(guess_count, solution_count, by = "letter") %>%
+        mutate(to_clear = n_in_guess - n_in_solution) %>%
+        filter(to_clear > 0) %>%
+        select(letter, to_clear)
+
+    for (i in 1:word_length) {
+        text_result[i] <- case_when(guess[i] %in% solution & guess[i] == solution[i] ~
+            "*", guess[i] %in% solution & guess[i] != solution[i] ~
+              "+", guess[i] %nin%
+            solution ~ "-")
+      
+        for (s in counts$letter) {
+            if (guess[i] == s & text_result[i] != "*" & counts[counts$letter == s,
+                ]$to_clear > 0) {
+                text_result[i] <- "-"
+                counts[counts$letter == s, ]$to_clear <- counts[counts$letter ==
+                  s, ]$to_clear - 1
+            }
+        }
+    }
+    return(text_result)
+}
+```
+
+```{r}
+
 ```
