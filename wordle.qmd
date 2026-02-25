@@ -4,10 +4,12 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Assignment 4 - Program a Word Game
+
+Below contains the code to run a game of NYT's Wordle in R
 
 ```{r}
-#Loading in my libraries
+#Loading in my libraries needed for the entire project
 library(tidyverse)
 library(sjmisc)
 
@@ -30,7 +32,7 @@ valid_list <- load_dictionary(scrabble)
 str(valid_list) #doublecheck!
 ```
 
-Step 2
+Step 2 - Winnowing the solution list
 
 ```{r}
 #Cutting the solution list so it only includes words already on the valid_list using the intersect() function
@@ -51,7 +53,7 @@ pick_solution <- function(word_list) {
 coolword <- pick_solution(solution_list) #exciting word!
 ```
 
-Step 4 part A - Play Wordle function
+Step 4 - Play Wordle and Evaluate Guess functions
 
 ```{r}
 #creating the play_wordle function 
@@ -167,7 +169,7 @@ evaluate_guess <- function(guess, coolword) {
 ```
 
 ```{r}
+#Running the game
 play_wordle(coolword, valid_list)
 
-RADIO
 ```
