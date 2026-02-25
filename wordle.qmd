@@ -143,20 +143,18 @@ evaluate_guess <- function(guess, coolword) {
         group_by(letter) %>%
         summarize(n_in_solution = n())
    
-     #Joins the two counts by letter and mutates 
+     #Joins the two counts by letter and mutates to account for excess guesses
     counts <- inner_join(guess_count, solution_count, by = "letter") %>%
         mutate(to_clear = n_in_guess - n_in_solution) %>%
         filter(to_clear > 0) %>% #Keeps only letters where guess has more occurrences than the solution
         select(letter, to_clear)
 
-    for (i in 1:word_length) {
-        resulttxt[i] <- case_when(guess[i] %in% coolword & guess[i] == coolword[i] ~
-            "*", guess[i] %in% coolword & guess[i] != coolword[i] ~
-              "+", guess[i] %nin%
-            coolword ~ "-")
-      
+    #The real pain in this chunk -> goes through letter by letter to double check if player guess matching coolword
+    for (i in 1:word_length) { #using operators to test for letters in guess to letters in coolword
+        resulttxt[i] <- case_when(guess[i] %in% coolword & guess[i] == coolword[i] ~ "*", guess[i] %in% coolword & guess[i] != coolword[i] ~ "+", guess[i] %nin% coolword ~ "-")
+      #Accounting for the yellow block from wordle, where the letter is present but not in that slot
         for (s in counts$letter) {
-            if (guess[i] == s & text_result[i] != "*" & counts[counts$letter == s,
+            if (guess[i] == s && resulttxt[i] != "*" && counts[counts$letter == s
                 ]$to_clear > 0) {
                 resulttxt[i] <- "-"
                 counts[counts$letter == s, ]$to_clear <- counts[counts$letter ==
