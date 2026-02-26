@@ -16,6 +16,7 @@ library(sjmisc)
 #Creating the load_dictionary function with filename as an argument
 load_dictionary <- function(filename) {
     wlist <- read_csv(filename, col_names = TRUE) #reading in the table
+    wlist <- wlist[["words"]] #providing the column name
 }
 
 #Loading in the datasets
@@ -42,8 +43,8 @@ Step 3 - Pick Solutions Function
 
 ```{r}
 #
-pick_solution <- function(word_list) {
-    solution_options <- word_list[nchar(word_list) == 5] #Only including words that are five characters
+pick_solution <- function(wlist) {
+    solution_options <- wlist[nchar(wlist) == 5] #Only including words that are five characters
     solution <- sample(solution_options, 1) #taking 1 random sample from the available five-letter words and labeling it as "solution"
     print(solution)
     vec_truesolution <- str_split(solution, "")[[1]] #taking the word chosen and splitting up each character across a vector
@@ -165,10 +166,12 @@ evaluate_guess <- function(guess, coolword) {
     }
     return(resulttxt)
 }
+
 ```
 
 ```{r}
 #Running the game
+#| eval: false
 play_wordle(coolword, valid_list)
 
 ```
