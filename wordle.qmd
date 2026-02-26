@@ -16,7 +16,6 @@ library(sjmisc)
 #Creating the load_dictionary function with filename as an argument
 load_dictionary <- function(filename) {
     wlist <- read_csv(filename, col_names = TRUE) #reading in the table
-    wlist <- word_list[["words"]] #providing the column name
 }
 
 #Loading in the datasets
@@ -39,7 +38,7 @@ Step 2 - Winnowing the solution list
 solution_list<- intersect(solution_list, valid_list)
 ```
 
-Step 3  - Pick Solutions Function
+Step 3 - Pick Solutions Function
 
 ```{r}
 #
