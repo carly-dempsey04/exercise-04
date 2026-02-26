@@ -80,7 +80,7 @@ play_wordle <- function(coolword, valid_list, num_guesses = 6) {
         print(paste0(c("Letters left: ", letters), collapse = " ")) 
   
       #Printing "Pick word ___!" to have the user return a response
-        guess <- readline(paste0("Pick word ", i, "! -> ")) %>% 
+        guess <- readline(paste0("Pick word ", i, "! -> ")) %>%
             toupper() #match capitalization
 
         #Using while() loop to validate the input word is the correct word length and return with readline response if not validated
@@ -151,7 +151,7 @@ evaluate_guess <- function(guess, coolword) {
         filter(to_clear > 0) %>% #Keeps only letters where guess has more occurrences than the solution
         select(letter, to_clear)
 
-    #The real pain in this chunk -> goes through letter by letter to double check if player guess matching coolword
+    #The real pain in this chunk -> supposed to go through letter by letter to double check if player guess matching coolword; I tried so hard and I simply cannot manage
     for (i in 1:word_length) { #using operators to test for letters in guess to letters in coolword
         resulttxt[i] <- case_when(guess[i] %in% coolword & guess[i] == coolword[i] ~ "*", guess[i] %in% coolword & guess[i] != coolword[i] ~ "+", guess[i] %nin% coolword ~ "-")
       #Accounting for the yellow block from wordle, where the letter is present but not in that slot
@@ -170,8 +170,7 @@ evaluate_guess <- function(guess, coolword) {
 ```
 
 ```{r}
-#Running the game
 #| eval: false
+#| #Running the game
 play_wordle(coolword, valid_list)
-
 ```
